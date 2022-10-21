@@ -6,22 +6,24 @@ const secrets = require('../secret')
 const { userNameTaken, missing } = require('../middleware/restricted')
 
 
-router.post('/register', userNameTaken, async (req, res, next) => {
+router.post('/register', userNameTaken, missing, async (req, res, next) => {
 try {
   const { username, password } = req.body;
-  const hash = bcryptjs.hashSync(password, 8)
+  const hash = bcryptjs.hashSync(password, 1)
   const newUser = { username, password: hash }
   const result = await add(newUser)
-  console.log(result)
-
-  if (!req.body.password || !req.body.username) {
-    next({
+/*   const x = await findBy({username})
+  if(username === x.username){
+    res.status(422).json({
+      message: "Username taken"
+    }) */
+    /* next({
       status: 422,
-      message: "username and password required"
-    })
-  }else {
-    next(res.status(200).json(result))
-  }
+      message: "Username taken"
+    }) */
+ // } else {
+ /*    res.status(200).json(result)
+  } */next(res.status(200).json(result))
   
 } catch(err) {
     next(err)
@@ -71,6 +73,7 @@ router.post('/login', missing, async (req, res, next) => {
         next(err)
       }
     
+
       /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -94,7 +97,7 @@ router.post('/login', missing, async (req, res, next) => {
     4- On FAILED login due to `username` not existing in the db, or `password` being incorrect,
       the response body should include a string exactly as follows: "invalid credentials".
   */
-});
+
 
 function buildToken(user) {
   const payload = {

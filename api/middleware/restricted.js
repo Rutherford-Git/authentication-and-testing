@@ -14,7 +14,7 @@ function restricted(req, res, next) {
           stack: err.stack
         })
       } else {
-       // req.decoded = decoded
+        req.decoded = decoded
         console.log(decoded)
         next()
       }
@@ -24,9 +24,9 @@ function restricted(req, res, next) {
   }
 }
 async function userNameTaken (req, res, next) {
-  console.log(req.body)
+
   const x = await findBy({username: req.body.username})
-  console.log(x)
+
     if(x.length){
         next({
         status: 422,
