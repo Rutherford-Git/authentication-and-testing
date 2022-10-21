@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { findBy, add } = require('./auth-model');
+const { findByUsername, add } = require('./auth-model');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken')
 const secrets = require('../secret')
@@ -12,7 +12,7 @@ try {
   const hash = bcryptjs.hashSync(password, 1)
   const newUser = { username, password: hash }
   const result = await add(newUser)
-  const x = await findBy({username})
+  const x = await findByUsername(username)
   if(username === x.username){
     res.status(422).json({
       message: "Username taken"
@@ -57,7 +57,7 @@ try {
 
 router.post('/login', missing, async (req, res, next) => {
     const { username, password } = req.body
-    findBy({ username })
+    findByUsername( username )
     .then(([user]) => {
       if (user && bcryptjs.compareSync(password, user.password)) {
         const token = buildToken(user)

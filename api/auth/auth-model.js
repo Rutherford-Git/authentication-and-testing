@@ -4,8 +4,8 @@ function find() {
   return db('users').select('id', 'username')
 }
 
-function findBy(filter) {
-  return db('users').where(filter)
+function findByUsername(filter) {
+  return db('users').where('username', filter)
 }
 
 
@@ -23,7 +23,7 @@ async function add(user) {
 
 module.exports = {
   find,
-  findBy,
+  findByUsername,
   add,
   findById
 }
