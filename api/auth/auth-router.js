@@ -53,22 +53,23 @@ try {
   */
 });
 
-router.post('/login', (red, res, next) => {
-    let { username, password } = red;
+router.post('/login', missing, async (req, res, next) => {
+  console.log(req.body)
+  try{
+    let { username, password } = req.body;
     console.log({username, password})
-
-    findBy({ username })
-      .then(user => {
+    const [user] = await findBy({ username })
+   /*  findBy({ username })
+      .then(user => { */
         if (user && bcryptjs.compareSync(password, user.password)) {
           const token = buildToken(user)
           res.status(200).json({ message: `welcome, ${user.username}`, token })
       } else {
           next({ status: 401, message: 'Invalid credentials' })
       }
-      })
-      .catch(err =>{
+    }catch(err){
         next(err)
-      })
+      }
     
       /*
     IMPLEMENT
@@ -101,7 +102,7 @@ function buildToken(user) {
     username: user.username,
   }
   const options = {
-    expiresIn: '100d',
+    expiresIn: '1d',
   }
   return jwt.sign(payload, secrets.jtwSecret ,options)
 }
