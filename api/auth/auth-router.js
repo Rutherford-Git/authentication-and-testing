@@ -6,25 +6,25 @@ const secrets = require('../secret')
 const { userNameTaken, missing } = require('../middleware/restricted')
 
 
-router.post('/register', missing, async (req, res, next) => {
+router.post('/register', userNameTaken, missing, async (req, res, next) => {
 try {
   const { username, password } = req.body;
   const hash = bcryptjs.hashSync(password, 1)
   const newUser = { username, password: hash }
   const result = await add(newUser)
-  const x = await findByUsername(username)
+/*   const x = await findByUsername(username)
   if(username === x.username){
     res.status(422).json({
       message: "Username taken"
-    })
+    }) */
     /* next({
       status: 422,
       message: "Username taken"
     }) */
-  } else {
+ // } else {
     res.status(200).json(result)
-  }
-  res.status(200).json(result)
+ // }
+ // res.status(200).json(result)
 } catch(err) {
     next(err)
 }
