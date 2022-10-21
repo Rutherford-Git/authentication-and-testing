@@ -9,7 +9,7 @@ const { userNameTaken, missing } = require('../middleware/restricted')
 router.post('/register', userNameTaken, (req, res, next) => {
 try {
   const { username, password } = req.body;
-  const hash = bcryptjs.hashSync(password, secrets.BCRYPT_ROUNDS)
+  const hash = bcryptjs.hashSync(password, 2)
   const newUser = { username, password: hash }
   const result = add(newUser)
   console.log(result)
