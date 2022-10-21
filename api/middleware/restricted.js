@@ -36,7 +36,7 @@ async function userNameTaken (req, res, next) {
     }
 }
 function missing (req, res, next) {
-  if (!req.body.password.length || !req.body.username.length) {
+  if (!req.body.password || !req.body.username) {
     next({
       status: 422,
       message: "username and password required"
