@@ -24,7 +24,9 @@ function restricted(req, res, next) {
   }
 }
 async function userNameTaken (req, res, next) {
-  const x = await findBy(req.body.username)
+
+  const x = await findBy({username: req.body.username})
+
     if(x.length){
         next({
         status: 422,

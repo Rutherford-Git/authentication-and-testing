@@ -55,43 +55,25 @@ try {
   */
 });
 
-/* router.post('/login', missing, (req, res, next) => {
+router.post('/login', missing, async (req, res, next) => {
+  console.log(req.body)
+  try{
     let { username, password } = req.body;
-    console.log(req.body.username, password )
-    findBy({ username: req.body.username })
-    .then( user  => {
-      if (user && bcryptjs.compareSync(password, user.password)) {
-        const token = buildToken(user);
+    console.log({username, password})
+    const [user] = await findBy({ username })
+   /*  findBy({ username })
+      .then(user => { */
+        if (user && bcryptjs.compareSync(password, user.password)) {
+          const token = buildToken(user)
+          res.status(200).json({ message: `welcome, ${user.username}`, token })
+      } else {
+          next({ status: 401, message: 'Invalid credentials' })
+      }
+    }catch(err){
+        next(err)
+      }
+    
 
-        res.status(200).json({ 
-          message: `welcome, ${user.username}`,
-          token 
-          });
-
-    } else {
-        res.status(401).json({ message: 'Invalid credentials' })
-    }
-    })
-    .catch(err =>{
-      next(err)
-      
-    })
-  }); */
-  router.post("/login", missing, (req, res, next) => {
-  
-      let { username, password } = req.body
-  
-      findBy({ username })
-        .then(([user]) => {
-          if (user && bcryptjs.compareSync(password, user.password)) {
-            const token = buildToken(user)
-            res.status(200).json({ message: `welcome, ${user.username}`, token })
-          } else {
-            next({ status: 401, message: 'Invalid Credentials' })
-          }
-        })
-        .catch(next)
-  });
       /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
