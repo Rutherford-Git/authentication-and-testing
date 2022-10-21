@@ -14,10 +14,13 @@ try {
   const result = await add(newUser)
   const x = await findBy({username})
   if(username === x.username){
-    next({
-      status: 422,
+    res.status(422).json({
       message: "Username taken"
     })
+    /* next({
+      status: 422,
+      message: "Username taken"
+    }) */
   } else {
     res.status(200).json(result)
   }
