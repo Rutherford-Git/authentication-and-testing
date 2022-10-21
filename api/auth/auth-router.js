@@ -10,7 +10,7 @@ router.post('/register', userNameTaken, async (req, res, next) => {
 jest.setTimeout(1000);
 try {
   const { username, password } = req.body;
-  const hash = bcryptjs.hashSync(password, 8)
+  const hash = bcryptjs.hashSync(password, 4)
   const newUser = { username, password: hash }
   const result = await add(newUser)
   console.log(result)
