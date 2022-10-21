@@ -3,8 +3,10 @@ const { findBy, add } = require('./auth-model');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken')
 const secrets = require('../secret')
+const { userNameTaken, missing } = require('../middleware/restricted')
 
-router.post('/register', async (req, res, next) => {
+
+router.post('/register', userNameTaken, missing, async (req, res, next) => {
 try {
   const { username, password } = req.body;
   const hash = bcryptjs.hashSync(password, 8)
@@ -42,7 +44,7 @@ try {
   */
 });
 
-router.post('/login',async (req, res, next) => {
+router.post('/login', missing, async (req, res, next) => {
     const { username, password } = req.body
     findBy({ username })
     .then(([user]) => {

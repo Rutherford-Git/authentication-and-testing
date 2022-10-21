@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const secrets = require('../secret')
+const { findBy } = require('../auth/auth-model')
 
 function restricted(req, res, next) {
   const token = req.headers.authorization
@@ -22,6 +23,28 @@ function restricted(req, res, next) {
     next({ status: 401, message: 'Token required'})
   }
 }
+async function userNameTaken (req, res, next) {
+  const x = await findBy({username: req.body.username})
+  console.log(x)
+    if(x.length){
+        next({
+        status: 422,
+        message: "Username taken"
+      })
+    } else {
+      next()
+    }
+}
+function missing (req, res, next) {
+  if (!req.body.password.length || !req.body.username.length) {
+    next({
+      status: 422,
+      message: "username and password required"
+    })
+  }else {
+    next()
+  }
+}
   /*
     IMPLEMENT
 
@@ -35,5 +58,7 @@ function restricted(req, res, next) {
   */
 
 module.exports ={
-  restricted
+  restricted,
+  userNameTaken,
+  missing
 };
