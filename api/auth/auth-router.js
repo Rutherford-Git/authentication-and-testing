@@ -53,20 +53,22 @@ try {
   */
 });
 
-router.post('/login', missing, async (req, res, next) => {
-    const { username, password } = req.body
+router.post('/login', (red, res, next) => {
+    let { username, password } = red;
+    console.log({username, password})
+
     findBy({ username })
-    .then(([user]) => {
-      if (user && bcryptjs.compareSync(password, user.password)) {
-        const token = buildToken(user)
-        res.status(200).json({ message: `welcome, ${user.username}`, token })
-    } else {
-        next({ status: 401, message: 'Invalid credentials' })
-    }
-    })
-    .catch(err =>{
-      next(err)
-    })
+      .then(user => {
+        if (user && bcryptjs.compareSync(password, user.password)) {
+          const token = buildToken(user)
+          res.status(200).json({ message: `welcome, ${user.username}`, token })
+      } else {
+          next({ status: 401, message: 'Invalid credentials' })
+      }
+      })
+      .catch(err =>{
+        next(err)
+      })
     
       /*
     IMPLEMENT
