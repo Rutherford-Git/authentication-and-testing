@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 const secrets = require('../secret')
-const { findBy, findByUsername } = require('../auth/auth-model')
+const { findBy } = require('../auth/auth-model')
 
 function restricted(req, res, next) {
   const token = req.headers.authorization
@@ -14,7 +14,7 @@ function restricted(req, res, next) {
           stack: err.stack
         })
       } else {
-       // req.decoded = decoded
+        req.decoded = decoded
         console.log(decoded)
         next()
       }
@@ -24,7 +24,7 @@ function restricted(req, res, next) {
   }
 }
 async function userNameTaken (req, res, next) {
-  const x = await findByUsername(req.body.username)
+  const x = await findBy(req.body.username)
     if(x.length){
         next({
         status: 422,

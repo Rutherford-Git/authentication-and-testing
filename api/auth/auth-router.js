@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { findByUsername, add } = require('./auth-model');
+const { findBy, add } = require('./auth-model');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken')
 const secrets = require('../secret')
@@ -12,7 +12,7 @@ try {
   const hash = bcryptjs.hashSync(password, 1)
   const newUser = { username, password: hash }
   const result = await add(newUser)
-/*   const x = await findByUsername(username)
+/*   const x = await findBy({username})
   if(username === x.username){
     res.status(422).json({
       message: "Username taken"
@@ -22,9 +22,9 @@ try {
       message: "Username taken"
     }) */
  // } else {
-    res.status(200).json(result)
- // }
- // res.status(200).json(result)
+ /*    res.status(200).json(result)
+  } */next(res.status(200).json(result))
+  
 } catch(err) {
     next(err)
 }
@@ -55,21 +55,43 @@ try {
   */
 });
 
-router.post('/login', missing, async (req, res, next) => {
-    const { username, password } = req.body
-    findByUsername( username )
-    .then(([user]) => {
+/* router.post('/login', missing, (req, res, next) => {
+    let { username, password } = req.body;
+    console.log(req.body.username, password )
+    findBy({ username: req.body.username })
+    .then( user  => {
       if (user && bcryptjs.compareSync(password, user.password)) {
-        const token = buildToken(user)
-        res.status(200).json({ message: `welcome, ${user.username}`, token })
+        const token = buildToken(user);
+
+        res.status(200).json({ 
+          message: `welcome, ${user.username}`,
+          token 
+          });
+
     } else {
-        next({ status: 401, message: 'Invalid credentials' })
+        res.status(401).json({ message: 'Invalid credentials' })
     }
     })
     .catch(err =>{
       next(err)
+      
     })
-    
+  }); */
+  router.post("/login", missing, (req, res, next) => {
+  
+      let { username, password } = req.body
+  
+      findBy({ username })
+        .then(([user]) => {
+          if (user && bcryptjs.compareSync(password, user.password)) {
+            const token = buildToken(user)
+            res.status(200).json({ message: `welcome, ${user.username}`, token })
+          } else {
+            next({ status: 401, message: 'Invalid Credentials' })
+          }
+        })
+        .catch(next)
+  });
       /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -93,7 +115,7 @@ router.post('/login', missing, async (req, res, next) => {
     4- On FAILED login due to `username` not existing in the db, or `password` being incorrect,
       the response body should include a string exactly as follows: "invalid credentials".
   */
-});
+
 
 function buildToken(user) {
   const payload = {
@@ -101,7 +123,7 @@ function buildToken(user) {
     username: user.username,
   }
   const options = {
-    expiresIn: '100d',
+    expiresIn: '1d',
   }
   return jwt.sign(payload, secrets.jtwSecret ,options)
 }
