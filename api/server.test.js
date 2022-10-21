@@ -38,7 +38,7 @@ describe('./login endpoint', ()=>{
     expect(res.body.message).toMatch(/welcome, foo/)
 })
   test('[3]', async ()=>{
-    const res = await request(server).post('/api/auth/login').send({ username: 'foo', password: '' })
+    const res = await request(server).post('/api/auth/login').send({ username: 'tea', password: '' })
     expect(res.body.message).toMatch(/username and password required/)
   })
 })
