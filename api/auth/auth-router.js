@@ -7,6 +7,7 @@ const { userNameTaken, missing } = require('../middleware/restricted')
 
 
 router.post('/register', userNameTaken, async (req, res, next) => {
+jest.setTimeout(1000);
 try {
   const { username, password } = req.body;
   const hash = bcryptjs.hashSync(password, 8)
