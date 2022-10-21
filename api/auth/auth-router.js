@@ -6,13 +6,13 @@ const secrets = require('../secret')
 const { userNameTaken, missing } = require('../middleware/restricted')
 
 
-router.post('/register', userNameTaken, async (req, res, next) => {
+router.post('/register', userNameTaken, (req, res, next) => {
 jest.setTimeout(1000);
 try {
   const { username, password } = req.body;
   const hash = bcryptjs.hashSync(password, secrets.BCRYPT_ROUNDS)
   const newUser = { username, password: hash }
-  const result = await add(newUser)
+  const result = add(newUser)
   console.log(result)
 
   if (!req.body.password || !req.body.username) {
