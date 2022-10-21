@@ -23,9 +23,8 @@ function restricted(req, res, next) {
     next({ status: 401, message: 'Token required'})
   }
 }
-async function userNameTaken (req, res, next) {
-  const x = await findBy({username: req.body.username})
-  console.log(x)
+ function userNameTaken (req, res, next) {
+  const x = findBy({username: req.body.username})
     if(x.length){
         next({
         status: 422,

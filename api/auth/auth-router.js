@@ -6,7 +6,7 @@ const secrets = require('../secret')
 const { userNameTaken, missing } = require('../middleware/restricted')
 
 
-router.post('/register', missing, async (req, res, next) => {
+router.post('/register', userNameTaken, missing, async (req, res, next) => {
 try {
   const { username, password } = req.body;
   const hash = bcryptjs.hashSync(password, 8)
