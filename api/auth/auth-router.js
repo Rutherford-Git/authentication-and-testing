@@ -7,27 +7,17 @@ const { userNameTaken, missing } = require('../middleware/restricted')
 
 
 router.post('/register', missing, userNameTaken,  async (req, res, next) => {
-try {
-  const { username, password } = req.body;
-  const hash = bcryptjs.hashSync(password, 1)
-  const newUser = { username, password: hash }
-  const result = await add(newUser)
-/*   const x = await findBy({username})
-  if(username === x.username){
-    res.status(422).json({
-      message: "Username taken"
-    }) */
-    /* next({
-      status: 422,
-      message: "Username taken"
-    }) */
- // } else {
- /*    res.status(200).json(result)
-  } */next(res.status(200).json(result))
-  
-} catch(err) {
-    next(err)
-}
+  try {
+    const { username, password } = req.body;
+    const hash = bcryptjs.hashSync(password, 1)
+    const newUser = { username, password: hash }
+    const result = await add(newUser)
+    next(res.status(200).json(result))  
+  } catch(err) {
+      next(err)
+  }
+});
+
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -53,7 +43,6 @@ try {
     4- On FAILED registration due to the `username` being taken,
       the response body should include a string exactly as follows: "username taken".
   */
-});
 
 router.post('/login', missing, async (req, res, next) => {
   console.log(req.body)
@@ -61,8 +50,6 @@ router.post('/login', missing, async (req, res, next) => {
     let { username, password } = req.body;
     console.log({username, password})
     const [user] = await findBy({ username })
-   /*  findBy({ username })
-      .then(user => { */
         if (user && bcryptjs.compareSync(password, user.password)) {
           const token = buildToken(user)
           res.status(200).json({ message: `welcome, ${user.username}`, token })
