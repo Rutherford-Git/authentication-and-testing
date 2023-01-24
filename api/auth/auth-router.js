@@ -1,27 +1,24 @@
-const router = require('express').Router();
-const { findBy, add } = require('./auth-model');
-const bcryptjs = require('bcryptjs');
-const jwt = require('jsonwebtoken')
-const secrets = require('../secret')
-const { userNameTaken, missing } = require('../middleware/restricted')
+const router = require("express").Router();
+const { findBy, add } = require("./auth-model");
+const bcryptjs = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const secrets = require("../secret");
+const { userNameTaken, missing } = require("../middleware/restricted");
 
-
-router.post('/register', missing, userNameTaken,  async (req, res, next) => {
+router.post("/register", missing, userNameTaken, async (req, res, next) => {
   try {
     const { username, password } = req.body;
-    const hash = bcryptjs.hashSync(password, 1)
-    const newUser = { username, password: hash }
-    const result = await add(newUser)
-    next(res.status(200).json(result))  
-  } catch(err) {
-      next(err)
+    const hash = bcryptjs.hashSync(password, 1);
+    const newUser = { username, password: hash };
+    const result = await add(newUser);
+    next(res.status(200).json(result));
+  } catch (err) {
+    next(err);
   }
 });
 
-  /*
-    IMPLEMENT
-    You are welcome to build additional middlewares to help with the endpoint's functionality.
-    DO NOT EXCEED 2^8 ROUNDS OF HASHING!
+/*
+    IMPLEMENT:
 
     1- In order to register a new account the client must provide `username` and `password`:
       {
@@ -44,25 +41,24 @@ router.post('/register', missing, userNameTaken,  async (req, res, next) => {
       the response body should include a string exactly as follows: "username taken".
   */
 
-router.post('/login', missing, async (req, res, next) => {
-  console.log(req.body)
-  try{
+router.post("/login", missing, async (req, res, next) => {
+  console.log(req.body);
+  try {
     let { username, password } = req.body;
-    console.log({username, password})
-    const [user] = await findBy({ username })
-        if (user && bcryptjs.compareSync(password, user.password)) {
-          const token = buildToken(user)
-          res.status(200).json({ message: `welcome, ${user.username}`, token })
-      } else {
-          next({ status: 401, message: 'Invalid credentials' })
-      }
-    }catch(err){
-        next(err)
-      }
-})
-    
+    console.log({ username, password });
+    const [user] = await findBy({ username });
+    if (user && bcryptjs.compareSync(password, user.password)) {
+      const token = buildToken(user);
+      res.status(200).json({ message: `welcome, ${user.username}`, token });
+    } else {
+      next({ status: 401, message: "Invalid credentials" });
+    }
+  } catch (err) {
+    next(err);
+  }
+});
 
-      /*
+/*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
 
@@ -86,16 +82,15 @@ router.post('/login', missing, async (req, res, next) => {
       the response body should include a string exactly as follows: "invalid credentials".
   */
 
-
 function buildToken(user) {
   const payload = {
     subject: user.id,
     username: user.username,
-  }
+  };
   const options = {
-    expiresIn: '1d',
-  }
-  return jwt.sign(payload, secrets.jtwSecret ,options)
+    expiresIn: "1d",
+  };
+  return jwt.sign(payload, secrets.jtwSecret, options);
 }
 
 module.exports = router;
